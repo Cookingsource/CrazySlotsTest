@@ -45,11 +45,13 @@
                             return groundPos;
                         });
 
-            this.heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
-            this.followerNavigators = 
-                this.FormationSlots.Select( 
-                    slot => new Navigator(0, null, Observable.EveryUpdate().Select( _=> slot.position)))
-                .ToList();
+            var heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
+            this.formationNavigator = new FormationNavigator(
+                FreeAnimals,
+                Followers, 
+                FormationSlots, 
+                heroNavigator);
+
 
             this.WhenHeroWillDropFollowersAtPen = 
                 this.PenCollisionTrigger.OnTriggerEnter2DAsObservable()
@@ -69,7 +71,7 @@
                           .Where( _ => FreeAnimals.Count < MaxAnimalsOnField && IsPlaying.Value == true)
                           .Select( _ => WhiteSheepPool.Retain());
 
-            WhenHeroCanGatherAnimal.Subscribe(AddAnimalToFollowers);
+            WhenHeroCanGatherAnimal.Subscribe( formationNavigator.AddAnimalToFollowers);
             WhenAnimalSpawns.Subscribe(AddToFieldInRandomPosition);
             WhenHeroWillDropFollowersAtPen.Select( followers => DropAnimalsInPen(followers))
                                           .Switch()
@@ -131,36 +133,12 @@
             this.FreeAnimals.Add(animal);
         }
 
-        private void AddAnimalToFollowers(Animal animal)
-        {
-            FreeAnimals.Remove(animal);
-            Followers.Add(animal);
-            for( int i = 0; i < followerNavigators.Count; i++)
-            {
-                var navigator = followerNavigators[i];
-                if( i < Followers.Count)
-                {
-                    navigator.Speed = Followers[i].Speed;
-                    navigator.Mobile = Followers[i].transform;
-                }
-                else
-                {
-                    navigator.Speed = 0;
-                    navigator.Mobile = null;
-                }
-            }
-        }
+
 
         private void Update()
         {
             float deltaTime = Time.deltaTime;
-            this.heroNavigator.Speed = HeroSpeed;
-            this.heroNavigator.Update(deltaTime);
-            for( int i = 0; i < Followers.Count ; i++)
-            {
-                var navigator = followerNavigators[i];
-                navigator.Update(deltaTime);
-            }
+            this.formationNavigator.Update(deltaTime);
         }
 
         private void OnDrawGizmos()
@@ -169,12 +147,8 @@
 
             if( Application.isPlaying )
             {
-                Gizmos.DrawWireSphere(heroNavigator.Target, .1f);
-                for( int i = 0; i < Followers.Count ; i++)
-                {
-                    Gizmos.DrawWireSphere(followerNavigators[i].Target, .1f);
-                }
-                Gizmos.DrawWireSphere(heroNavigator.CurrentPosition, HeroGatherRadious);
+                formationNavigator.DrawGizmos();
+                Gizmos.DrawWireSphere(formationNavigator.Lead.CurrentPosition, HeroGatherRadious);
             }
         }
 
@@ -186,12 +160,13 @@
         }
 
         private IObservable<Vector3> WhenUserClicks;
+        private FormationNavigator formationNavigator;
         private IObservable<List<Animal>> WhenHeroWillDropFollowersAtPen;
         private IObservable<Animal> WhenHeroCanGatherAnimal;
         private IObservable<Animal> WhenAnimalSpawns;
                                                              
-        private Navigator heroNavigator;
-        private List<Navigator> followerNavigators;
+        //private Navigator heroNavigator;
+        //private List<Navigator> followerNavigators;
         private bool droppingAnimals;
         private IDisposable countDownSubscription;
 

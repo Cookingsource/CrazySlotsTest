@@ -20,14 +20,13 @@
         private void Start()
         {
             GameController.TotalScore.SubscribeToText(PointsText);
-            GameController.LevelTimeLeftSeconds.SubscribeToText(PointsText, seconds => seconds.ToString("G4"));
+            GameController.LevelTimeLeftSeconds.SubscribeToText(TimeSecondsText, seconds => seconds.ToString("G4"));
             GameController.IsPlaying.DistinctUntilChanged().Subscribe(OnIsPlayingChanged);
             RestartButton.OnClickAsObservable()
                          .Where( _ => GameController.IsPlaying.Value == false)
                          .Subscribe( _ => GameController.StartLevel());
         }
 
-        // Update is called once per frame
         void Update()
         {
 
