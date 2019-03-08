@@ -7,22 +7,25 @@
 
     public class Navigator 
     {
-        private Transform mobile;
         private Vector3 target;
 
         public Navigator(float initialSpeed, Transform mobile, IObservable<Vector3> WhenTargetUpdates)
         {
-            this.mobile = mobile;
+            this.Mobile = mobile;
             this.Speed = initialSpeed;
             WhenTargetUpdates.Subscribe( newTarget => target = newTarget);
         }
 
         public float Speed { get; set; }
+        public Transform Mobile {get; set;}
         public Vector3 Target { get { return target; } }
-        public Vector3 CurrentPosition { get { return mobile.position;}}
+        public Vector3 CurrentPosition { get { return Mobile.position;}}
 
         public void Update(float deltaTime)
         {
+            if(Mobile == null)
+                return;
+
             float distanceUpdate = Speed * deltaTime;
             Vector3 vectorToTarget = target - CurrentPosition;
             float distanceToTarget = vectorToTarget.magnitude;
@@ -30,11 +33,11 @@
             
             if( distanceToTarget > distanceUpdate)
             {
-                mobile.position += vectorToTargetNormalized * distanceUpdate;
-                mobile.up = vectorToTargetNormalized;
+                Mobile.position += vectorToTargetNormalized * distanceUpdate;
+                Mobile.up = vectorToTargetNormalized;
             }
             else
-                mobile.position = target;
+                Mobile.position = target;
         }
     }
     

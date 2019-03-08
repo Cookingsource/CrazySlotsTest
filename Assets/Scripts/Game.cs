@@ -12,10 +12,9 @@
         private const float GroundZ = 0;
 
         public Transform Hero;
+        public List<Transform> FormationSlots;
         public ObservableTrigger2DTrigger PenCollisionTrigger;
         
-        //public Vector2 HeroPosition;
-        //public Vector2 HeroTarget;
         public float HeroGatherRadious = 1f;
         public float HeroSpeed;
         public List<Animal> Followers;
@@ -32,24 +31,56 @@
         private void OnEnable()
         {
             this.heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
+            this.followerNavigators = 
+                this.FormationSlots.Select( 
+                    slot => new Navigator(0, null, Observable.EveryUpdate().Select( _=> slot.position)))
+                .ToList();
+
             this.WhenHeroDropsFollowersAtPen = 
                 this.PenCollisionTrigger.OnTriggerEnter2DAsObservable()
                     .Where ( collider => collider.gameObject == Hero.gameObject )
                     .Where ( _ => Followers.Count > 0 )
                     .Select( _ => Followers);
-                    
+
             this.WhenHeroCanGatherAnimal = 
                 Observable.EveryUpdate()
                     .Where( _ => Followers.Count < MaxFollowers)
                     .Select( _ => FreeAnimals.FirstOrDefault( IsAnimalInGatherRange ))
                     .Where ( animal => animal != null);
 
+            WhenHeroCanGatherAnimal.Subscribe(AddAnimalToFollowers);
+        }
+
+        private void AddAnimalToFollowers(Animal animal)
+        {
+            FreeAnimals.Remove(animal);
+            Followers.Add(animal);
+            for( int i = 0; i < followerNavigators.Count; i++)
+            {
+                var navigator = followerNavigators[i];
+                if( i < Followers.Count)
+                {
+                    navigator.Speed = Followers[i].Speed;
+                    navigator.Mobile = Followers[i].transform;
+                }
+                else
+                {
+                    navigator.Speed = 0;
+                    navigator.Mobile = null;
+                }
+            }
         }
 
         private void Update()
         {
+            float deltaTime = Time.deltaTime;
             this.heroNavigator.Speed = HeroSpeed;
-            this.heroNavigator.Update(Time.deltaTime);
+            this.heroNavigator.Update(deltaTime);
+            for( int i = 0; i < Followers.Count ; i++)
+            {
+                var navigator = followerNavigators[i];
+                navigator.Update(deltaTime);
+            }
         }
 
         private void OnDrawGizmos()
@@ -57,6 +88,10 @@
             if( Application.isPlaying )
             {
                 Gizmos.DrawWireSphere(heroNavigator.Target, .1f);
+                for( int i = 0; i < Followers.Count ; i++)
+                {
+                    Gizmos.DrawWireSphere(followerNavigators[i].Target, .1f);
+                }
                 Gizmos.DrawWireSphere(heroNavigator.CurrentPosition, HeroGatherRadious);
             }
         }
@@ -81,6 +116,7 @@
         private IObservable<List<Animal>> WhenHeroDropsFollowersAtPen;
         private IObservable<Animal> WhenHeroCanGatherAnimal;
         private Navigator heroNavigator;
+        private List<Navigator> followerNavigators;
     }
 }
 
