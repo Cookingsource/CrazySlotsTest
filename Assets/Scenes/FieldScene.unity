@@ -964,6 +964,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1226001661}
+  - component: {fileID: 1226001662}
   m_Layer: 5
   m_Name: Gameplay
   m_TagString: Untagged
@@ -991,6 +992,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1226001662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1226001660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e159a263c574037b508518b34b0c62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PointsText: {fileID: 324919367}
+  TimeSecondsText: {fileID: 1924673485}
+  RestartButton: {fileID: 1730518450}
+  gameController: {fileID: 2071137547}
 --- !u!1001 &1339420968
 Prefab:
   m_ObjectHideFlags: 0
@@ -1642,7 +1658,6 @@ MonoBehaviour:
   MaxAnimalsOnField: 10
   ScorePerAnimal: 1
   LevelDurationSeconds: 30
-  TotalScore: 0
   LevelTimeLeft: 0
   FakeDropDelaySeconds: 0.5
 --- !u!4 &2071137548

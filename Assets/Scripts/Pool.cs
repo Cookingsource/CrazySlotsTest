@@ -41,8 +41,19 @@
             if( itemToRelease == null)
                 return;
 
-            itemToRelease.IsRetained = false;
-            itemToRelease.Value.transform.position = instanceToClone.transform.position;
+            Release(itemToRelease);
+        }
+
+        public void ReleaseAll()
+        {
+            foreach( var item in items)
+                Release(item);
+        }
+
+        private void Release( PoolItem item)
+        {
+            item.IsRetained = false;
+            item.Value.transform.position = instanceToClone.transform.position;
         }
 
         private class PoolItem
