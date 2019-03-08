@@ -342,6 +342,12 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 324919365}
   m_CullTransparentMesh: 0
+--- !u!114 &517098053 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114547986240079328, guid: 9431714f0eee54a27bb78085b99a6c60,
+    type: 2}
+  m_PrefabInternal: {fileID: 2036727608}
+  m_Script: {fileID: 11500000, guid: dba681d0e890c411f847c685986ebbc2, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,6 +595,12 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 742026547}
   m_CullTransparentMesh: 0
+--- !u!114 &902446383 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114892588932507894, guid: 945c34f3ed04f4a75a08862c37136389,
+    type: 2}
+  m_PrefabInternal: {fileID: 3616116}
+  m_Script: {fileID: 11500000, guid: dba681d0e890c411f847c685986ebbc2, type: 3}
 --- !u!1001 &1026748168
 Prefab:
   m_ObjectHideFlags: 0
@@ -1229,15 +1241,26 @@ Prefab:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114327882993738820, guid: 23e1a7105e10c4d51a8f1c5591a24ca9, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 23e1a7105e10c4d51a8f1c5591a24ca9, type: 2}
   m_IsPrefabAsset: 0
---- !u!114 &1752144292 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114327882993738820, guid: 23e1a7105e10c4d51a8f1c5591a24ca9,
+--- !u!1 &1752144290 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1812921825870894, guid: 23e1a7105e10c4d51a8f1c5591a24ca9,
     type: 2}
   m_PrefabInternal: {fileID: 1752144289}
-  m_Script: {fileID: 11500000, guid: 1be7847b61f30f24daa5762db87a5b19, type: 3}
+--- !u!114 &1752144291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1752144290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aad3129752ef804999a880a7b2d72ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1924673483
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,10 +1408,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hero: {fileID: 1437136074}
-  PenCollisionTrigger: {fileID: 1752144292}
+  PenCollisionTrigger: {fileID: 1752144291}
+  HeroGatherRadious: 1
   HeroSpeed: 10
   Followers: []
-  FreeAnimals: []
+  FreeAnimals:
+  - {fileID: 517098053}
+  - {fileID: 902446383}
   SpeedIncreaseCooldownSeconds: 0
   MaxFollowers: 5
   MaxAnimalsOnField: 10
