@@ -845,6 +845,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!4 &1437136074 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4505252760299972, guid: 775a6092a38234f87852e8a943ed2f62,
+    type: 2}
+  m_PrefabInternal: {fileID: 1026748168}
 --- !u!1 &1675943492
 GameObject:
   m_ObjectHideFlags: 0
@@ -1249,3 +1254,55 @@ Prefab:
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9431714f0eee54a27bb78085b99a6c60, type: 2}
   m_IsPrefabAsset: 0
+--- !u!1 &2071137546
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2071137548}
+  - component: {fileID: 2071137547}
+  m_Layer: 0
+  m_Name: GameController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2071137547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2071137546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb57a6fa8a6bf448e83be5227a7e3c31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Hero: {fileID: 1437136074}
+  HeroSpeed: 10
+  Followers: []
+  FreeAnimals: []
+  SpeedIncreaseCooldownSeconds: 0
+  MaxFollowers: 5
+  MaxAnimalsOnField: 10
+  ScorePerAnimal: 1
+  LevelDurationSeconds: 30
+  TotalScore: 0
+  LevelTimeLeft: 0
+  FakeDropDelaySeconds: 0.5
+--- !u!4 &2071137548
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2071137546}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 296.0865, y: 209.08003, z: -0.78858924}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
