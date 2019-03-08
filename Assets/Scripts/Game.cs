@@ -6,6 +6,7 @@
     using UnityEngine;
     using UniRx;
     using UniRx.Triggers;
+    using System;
 
     public class Game : MonoBehaviour
     {
@@ -14,6 +15,9 @@
         public Transform Hero;
         public List<Transform> FormationSlots;
         public ObservableTrigger2DTrigger PenCollisionTrigger;
+        public Rect SpawnArea = new Rect(0,0,1,1);
+
+        public AnimalPool WhiteSheepPool = new AnimalPool();
         
         public float HeroGatherRadious = 1f;
         public float HeroSpeed;
@@ -30,6 +34,8 @@
 
         private void OnEnable()
         {
+            WhiteSheepPool.Initialize(MaxAnimalsOnField + MaxFollowers);
+
             this.heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
             this.followerNavigators = 
                 this.FormationSlots.Select( 
@@ -48,7 +54,23 @@
                     .Select( _ => FreeAnimals.FirstOrDefault( IsAnimalInGatherRange ))
                     .Where ( animal => animal != null);
 
+             
+            this.WhenAnimalSpawns = 
+                Observable.Interval(TimeSpan.FromSeconds(1))
+                          .Where( _ => FreeAnimals.Count < MaxAnimalsOnField)
+                          .Select( _ => WhiteSheepPool.Retain());
+
             WhenHeroCanGatherAnimal.Subscribe(AddAnimalToFollowers);
+            WhenAnimalSpawns.Subscribe(AddToFieldInRandomPosition);
+        }
+
+        private void AddToFieldInRandomPosition(Animal animal)
+        {
+            float x = UnityEngine.Random.Range(SpawnArea.xMin, SpawnArea.xMax);
+            float y = UnityEngine.Random.Range(SpawnArea.yMin, SpawnArea.yMax);
+            Vector3 fieldPos = new Vector3(x, y, GroundZ);
+            animal.transform.position = fieldPos;
+            this.FreeAnimals.Add(animal);
         }
 
         private void AddAnimalToFollowers(Animal animal)
@@ -85,6 +107,8 @@
 
         private void OnDrawGizmos()
         {
+            Gizmos.DrawWireCube(this.SpawnArea.center, this.SpawnArea.size);
+
             if( Application.isPlaying )
             {
                 Gizmos.DrawWireSphere(heroNavigator.Target, .1f);
@@ -115,8 +139,14 @@
 
         private IObservable<List<Animal>> WhenHeroDropsFollowersAtPen;
         private IObservable<Animal> WhenHeroCanGatherAnimal;
+
+        private IObservable<Animal> WhenAnimalSpawns;
+                                                             
         private Navigator heroNavigator;
         private List<Navigator> followerNavigators;
+
+        [Serializable]
+        public class AnimalPool : Pool<Animal> {}
     }
 }
 

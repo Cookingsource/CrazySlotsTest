@@ -1,15 +1,18 @@
 ﻿namespace CrazySlots
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using UnityEngine;
 
+    [Serializable]
     public class Pool<T> where T : MonoBehaviour 
     {
         private List<PoolItem> items;
+        public T instanceToClone;
 
-        public void Initialize(int maxItems, T instanceToClone)
+        public void Initialize(int maxItems)
         {
             items = new List<PoolItem>(maxItems);
             for( int i = 0; i<maxItems; i++)
