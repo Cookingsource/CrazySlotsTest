@@ -42,6 +42,7 @@
                 return;
 
             itemToRelease.IsRetained = false;
+            itemToRelease.Value.transform.position = instanceToClone.transform.position;
         }
 
         private class PoolItem

@@ -42,7 +42,7 @@
                     slot => new Navigator(0, null, Observable.EveryUpdate().Select( _=> slot.position)))
                 .ToList();
 
-            this.WhenHeroDropsFollowersAtPen = 
+            this.WhenHeroWillDropFollowersAtPen = 
                 this.PenCollisionTrigger.OnTriggerEnter2DAsObservable()
                     .Where ( collider => collider.gameObject == Hero.gameObject )
                     .Where ( _ => Followers.Count > 0 )
@@ -62,6 +62,27 @@
 
             WhenHeroCanGatherAnimal.Subscribe(AddAnimalToFollowers);
             WhenAnimalSpawns.Subscribe(AddToFieldInRandomPosition);
+            WhenHeroWillDropFollowersAtPen.Select( followers => DropAnimalsInPen(followers))
+                                          .Switch()
+                                          .Subscribe( _ => ReleaseFollowers());
+            
+        }
+
+        private void ReleaseFollowers()
+        {
+            
+            this.TotalScore += Followers.Sum( animal => animal.Points);
+            foreach( var follower in Followers)
+                WhiteSheepPool.Release(follower);
+
+            Followers.Clear();
+        }
+
+        private IObservable<Unit> DropAnimalsInPen(List<Animal> animals)
+        {
+            return Observable.Interval(TimeSpan.FromSeconds(FakeDropDelaySeconds))
+                             .Take(1)
+                             .Select( _ => Unit.Default);
         }
 
         private void AddToFieldInRandomPosition(Animal animal)
@@ -137,7 +158,7 @@
                           return groundPos;
                       });
 
-        private IObservable<List<Animal>> WhenHeroDropsFollowersAtPen;
+        private IObservable<List<Animal>> WhenHeroWillDropFollowersAtPen;
         private IObservable<Animal> WhenHeroCanGatherAnimal;
 
         private IObservable<Animal> WhenAnimalSpawns;

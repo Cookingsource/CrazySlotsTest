@@ -6,7 +6,8 @@
 
     public class Animal : MonoBehaviour
     {
-        public float Speed;
+        public float Speed = 9;
+        public int Points = 1;
     }
 }
 
