@@ -1006,7 +1006,8 @@ MonoBehaviour:
   PointsText: {fileID: 324919367}
   TimeSecondsText: {fileID: 1924673485}
   RestartButton: {fileID: 1730518450}
-  gameController: {fileID: 2071137547}
+  GameController: {fileID: 2071137547}
+  EndGamePanel: {fileID: 1675943493}
 --- !u!1001 &1339420968
 Prefab:
   m_ObjectHideFlags: 0
@@ -1656,9 +1657,7 @@ MonoBehaviour:
   SpeedIncreaseCooldownSeconds: 0
   MaxFollowers: 5
   MaxAnimalsOnField: 10
-  ScorePerAnimal: 1
   LevelDurationSeconds: 30
-  LevelTimeLeft: 0
   FakeDropDelaySeconds: 0.5
 --- !u!4 &2071137548
 Transform:

@@ -77,7 +77,7 @@
             StartLevel();
         }
 
-        private void StartLevel()
+        public void StartLevel()
         {
             this.TotalScore.Value = 0;
             this.LevelTimeLeftSeconds.Value = 0;
@@ -92,7 +92,15 @@
             var levelCountDown = Observable.Interval(TimeSpan.FromSeconds(0.01f))
                                            .Take( Mathf.CeilToInt( LevelDurationSeconds / timeTickSeconds));
 
-            this.countDownSubscription = levelCountDown.Subscribe( _ => LevelTimeLeftSeconds.Value -= timeTickSeconds);
+            this.countDownSubscription = levelCountDown.Subscribe( _ => 
+            {
+                LevelTimeLeftSeconds.Value -= timeTickSeconds;
+                if(Mathf.Abs( LevelTimeLeftSeconds.Value ) < 0.001 )
+                {
+                    LevelTimeLeftSeconds.Value = 0;
+                    this.IsPlaying.Value = false;
+                }
+            });
             this.IsPlaying.Value = true;
         }
 

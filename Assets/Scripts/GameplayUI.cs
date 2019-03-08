@@ -12,19 +12,31 @@
         public Text TimeSecondsText;
         public Button RestartButton;
 
-        public Game gameController; 
+        public Game GameController; 
+
+        public RectTransform EndGamePanel;
         
 
         private void Start()
         {
-            gameController.TotalScore.SubscribeToText(PointsText);
-            gameController.LevelTimeLeftSeconds.SubscribeToText(PointsText, seconds => seconds.ToString("G4"));
+            GameController.TotalScore.SubscribeToText(PointsText);
+            GameController.LevelTimeLeftSeconds.SubscribeToText(PointsText, seconds => seconds.ToString("G4"));
+            GameController.IsPlaying.DistinctUntilChanged().Subscribe(OnIsPlayingChanged);
+            RestartButton.OnClickAsObservable()
+                         .Where( _ => GameController.IsPlaying.Value == false)
+                         .Subscribe( _ => GameController.StartLevel());
         }
 
         // Update is called once per frame
         void Update()
         {
 
+        }
+
+        private void OnIsPlayingChanged(bool isPlaying)
+        {
+            bool enableEndGamePanel = !isPlaying;
+            EndGamePanel.gameObject.SetActive(enableEndGamePanel);
         }
     }
 }
