@@ -12,18 +12,12 @@
     {
         private const float GroundZ = 0;
 
-        public Transform Hero;
+        public Hero Hero;
         public List<Transform> FormationSlots;
         public ObservableTrigger2DTrigger PenCollisionTrigger;
         public Rect SpawnArea = new Rect(0,0,1,1);
-
         public AnimalPool WhiteSheepPool = new AnimalPool();
-        
-        public float HeroGatherRadious = 1f;
-        public float HeroSpeed;
-        public List<Animal> Followers;
-        public List<Animal> FreeAnimals;
-        public float SpeedIncreaseCooldownSeconds;
+        public float SpeedIncreaseCooldownSeconds = 10f;
         public int MaxFollowers = 5;
         public int MaxAnimalsOnField = 10;
         public float LevelDurationSeconds = 30f;
@@ -31,6 +25,8 @@
         public ReactiveProperty<float> LevelTimeLeftSeconds = new ReactiveProperty<float>(0);
         public ReactiveProperty<bool> IsPlaying = new ReactiveProperty<bool>(false);
         public float FakeDropDelaySeconds = 0.5f; 
+        private List<Animal> Followers = new List<Animal>();
+        private List<Animal> FreeAnimals = new List<Animal>();
 
         private void OnEnable()
         {
@@ -45,13 +41,12 @@
                             return groundPos;
                         });
 
-            var heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
+            var heroNavigator = new Navigator(Hero.Speed, Hero.transform, WhenUserClicks);
             this.formationNavigator = new FormationNavigator(
                 FreeAnimals,
                 Followers, 
                 FormationSlots, 
                 heroNavigator);
-
 
             this.WhenHeroWillDropFollowersAtPen = 
                 this.PenCollisionTrigger.OnTriggerEnter2DAsObservable()
@@ -62,7 +57,7 @@
             this.WhenHeroCanGatherAnimal = 
                 Observable.EveryUpdate()
                     .Where( _ => Followers.Count < MaxFollowers && IsPlaying.Value == true)
-                    .Select( _ => FreeAnimals.FirstOrDefault( IsAnimalInGatherRange ))
+                    .Select( _ => FreeAnimals.FirstOrDefault( Hero.IsAnimalInGatherRange ))
                     .Where ( animal => animal != null);
 
              
@@ -133,8 +128,6 @@
             this.FreeAnimals.Add(animal);
         }
 
-
-
         private void Update()
         {
             float deltaTime = Time.deltaTime;
@@ -148,25 +141,15 @@
             if( Application.isPlaying )
             {
                 formationNavigator.DrawGizmos();
-                Gizmos.DrawWireSphere(formationNavigator.Lead.CurrentPosition, HeroGatherRadious);
             }
         }
 
-        private bool IsAnimalInGatherRange(Animal animal)
-        {
-            Vector3 distanceVector = animal.transform.position - Hero.transform.position;
-            distanceVector.z = 0;
-            return distanceVector.magnitude < HeroGatherRadious;
-        }
-
         private IObservable<Vector3> WhenUserClicks;
-        private FormationNavigator formationNavigator;
         private IObservable<List<Animal>> WhenHeroWillDropFollowersAtPen;
         private IObservable<Animal> WhenHeroCanGatherAnimal;
         private IObservable<Animal> WhenAnimalSpawns;
-                                                             
-        //private Navigator heroNavigator;
-        //private List<Navigator> followerNavigators;
+        private FormationNavigator formationNavigator;
+
         private bool droppingAnimals;
         private IDisposable countDownSubscription;
 

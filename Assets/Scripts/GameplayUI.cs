@@ -15,7 +15,6 @@
         public Game GameController; 
 
         public RectTransform EndGamePanel;
-        
 
         private void Start()
         {
