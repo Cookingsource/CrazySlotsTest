@@ -35,6 +35,15 @@
         private void OnEnable()
         {
             WhiteSheepPool.Initialize(MaxAnimalsOnField + MaxFollowers);
+            WhenUserClicks = 
+                Observable.EveryUpdate()
+                        .Where( _ => Input.GetMouseButton(0) && !droppingAnimals)
+                        .Select( _ => 
+                        {
+                            Vector3 groundPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                            groundPos.z = GroundZ;
+                            return groundPos;
+                        });
 
             this.heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
             this.followerNavigators = 
@@ -80,8 +89,10 @@
 
         private IObservable<Unit> DropAnimalsInPen(List<Animal> animals)
         {
+            this.droppingAnimals = true;
             return Observable.Interval(TimeSpan.FromSeconds(FakeDropDelaySeconds))
                              .Take(1)
+                             .Do( _ => droppingAnimals = false)
                              .Select( _ => Unit.Default);
         }
 
@@ -148,23 +159,14 @@
             return distanceVector.magnitude < HeroGatherRadious;
         }
 
-        private IObservable<Vector3> WhenUserClicks = 
-            Observable.EveryUpdate()
-                      .Where( _ => Input.GetMouseButton(0))
-                      .Select( _ => 
-                      {
-                          Vector3 groundPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                          groundPos.z = GroundZ;
-                          return groundPos;
-                      });
-
+        private IObservable<Vector3> WhenUserClicks;
         private IObservable<List<Animal>> WhenHeroWillDropFollowersAtPen;
         private IObservable<Animal> WhenHeroCanGatherAnimal;
-
         private IObservable<Animal> WhenAnimalSpawns;
                                                              
         private Navigator heroNavigator;
         private List<Navigator> followerNavigators;
+        private bool droppingAnimals;
 
         [Serializable]
         public class AnimalPool : Pool<Animal> {}
