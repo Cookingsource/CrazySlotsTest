@@ -7,6 +7,7 @@
     using UniRx;
     using UniRx.Triggers;
     using System;
+    using Zenject;
 
     public class Game : MonoBehaviour
     {
@@ -16,7 +17,6 @@
         public List<Transform> FormationSlots;
         public ObservableTrigger2DTrigger PenCollisionTrigger;
         public Rect SpawnArea = new Rect(0,0,1,1);
-        public AnimalPool WhiteSheepPool = new AnimalPool();
         public float SpeedIncreaseCooldownSeconds = 10f;
         public int MaxFollowers = 5;
         public int MaxAnimalsOnField = 10;
@@ -27,6 +27,9 @@
         public float FakeDropDelaySeconds = 0.5f; 
         private List<Animal> Followers = new List<Animal>();
         private List<Animal> FreeAnimals = new List<Animal>();
+
+        [Inject]
+        private AnimalPool WhiteSheepPool;
 
         private void OnEnable()
         {
@@ -152,9 +155,6 @@
 
         private bool droppingAnimals;
         private IDisposable countDownSubscription;
-
-        [Serializable]
-        public class AnimalPool : Pool<Animal> {}
     }
 }
 

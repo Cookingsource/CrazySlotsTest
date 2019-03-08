@@ -5,16 +5,18 @@
     using UnityEngine;
     using UnityEngine.UI;
     using UniRx;
+    using Zenject;
 
     public class GameplayUI : MonoBehaviour
     {
         public Text PointsText;
         public Text TimeSecondsText;
         public Button RestartButton;
-
-        public Game GameController; 
-
         public RectTransform EndGamePanel;
+
+        [Inject]
+        Game GameController; 
+
 
         private void Start()
         {
@@ -24,11 +26,6 @@
             RestartButton.OnClickAsObservable()
                          .Where( _ => GameController.IsPlaying.Value == false)
                          .Subscribe( _ => GameController.StartLevel());
-        }
-
-        void Update()
-        {
-
         }
 
         private void OnIsPlayingChanged(bool isPlaying)
