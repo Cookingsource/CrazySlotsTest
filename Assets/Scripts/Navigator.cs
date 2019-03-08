@@ -23,13 +23,15 @@
 
         public void Update(float deltaTime)
         {
-            Vector3 vectorToTarget = target - CurrentPosition;
             float distanceUpdate = Speed * deltaTime;
+            Vector3 vectorToTarget = target - CurrentPosition;
             float distanceToTarget = vectorToTarget.magnitude;
+            Vector3 vectorToTargetNormalized = vectorToTarget / distanceToTarget;
             
             if( distanceToTarget > distanceUpdate)
             {
-                mobile.position += (vectorToTarget / distanceToTarget ) * distanceUpdate;
+                mobile.position += vectorToTargetNormalized * distanceUpdate;
+                mobile.up = vectorToTargetNormalized;
             }
             else
                 mobile.position = target;
