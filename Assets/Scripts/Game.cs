@@ -4,12 +4,14 @@
     using System.Collections.Generic;
     using UnityEngine;
     using UniRx;
+    using UniRx.Triggers;
 
     public class Game : MonoBehaviour
     {
         private const float GroundZ = 0;
 
         public Transform Hero;
+        public ObservableCollision2DTrigger PenCollisionTrigger;
         
         //public Vector2 HeroPosition;
         //public Vector2 HeroTarget;
@@ -28,12 +30,18 @@
         private void OnEnable()
         {
             this.heroNavigator = new Navigator(HeroSpeed, Hero, WhenUserClicks);
+            this.WhenHeroDropsFollowersAtPen = 
+                this.PenCollisionTrigger.OnTriggerEnter2DAsObservable()
+                    .Where ( collider => collider.gameObject == Hero.gameObject )
+                    .Where ( _ => Followers.Count > 0 )
+                    .Select( _ => Followers);
         }
 
         private void Update()
         {
             this.heroNavigator.Speed = HeroSpeed;
             this.heroNavigator.Update(Time.deltaTime);
+            
         }
 
         private void OnDrawGizmos()
@@ -51,6 +59,8 @@
                           groundPos.z = GroundZ;
                           return groundPos;
                       });
+        
+        private IObservable<List<Animal>> WhenHeroDropsFollowersAtPen;
         private Navigator heroNavigator;
     }
 }
